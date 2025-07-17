@@ -140,6 +140,23 @@ export const api = {
   getOutstandingLoans: () => apiRequest('/reports/outstanding'),
   
   getRecoveryReport: () => apiRequest('/reports/recovery'),
+
+  // Notifications
+  getNotifications: () => apiRequest('/notifications'),
+  
+  getUnreadCount: () => apiRequest('/notifications/unread-count'),
+  
+  markAsRead: (notificationId) => apiRequest(`/notifications/${notificationId}/read`, {
+    method: 'PATCH',
+  }),
+  
+  markAllAsRead: () => apiRequest('/notifications/mark-all-read', {
+    method: 'PATCH',
+  }),
+  
+  clearNotifications: () => apiRequest('/notifications/clear', {
+    method: 'DELETE',
+  }),
 };
 
 // Error handler for components

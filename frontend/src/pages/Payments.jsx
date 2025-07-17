@@ -160,7 +160,7 @@ function Payments({ user }) {
             gap: '1rem', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            marginBottom: '1.5rem' 
+            marginBottom: '1.5rem'
           }}>
             <select 
               className="form-control" 
@@ -178,11 +178,11 @@ function Payments({ user }) {
               onChange={handleFormChange} 
               required
             >
-              <option value="" disabled>Select Loan</option>
-              {loans.filter(l => l.status === 'approved').map(l => (
+            <option value="" disabled>Select Loan</option>
+            {loans.filter(l => l.status === 'approved').map(l => (
                 <option key={l.id} value={l.id}>Loan #{l.id} - ₹{l.amount}</option>
-              ))}
-            </select>
+            ))}
+          </select>
             <input 
               className="form-control" 
               style={{ 
@@ -213,19 +213,20 @@ function Payments({ user }) {
                 border: '2px solid #28a745',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 2px 8px rgba(40, 167, 69, 0.2)',
-                opacity: (form.loanId && getLoanDetails(form.loanId).balance === "0.00") || loading ? 0.6 : 1, 
-                cursor: (form.loanId && getLoanDetails(form.loanId).balance === "0.00") || loading ? 'not-allowed' : 'pointer' 
+                opacity: (form.loanId && getLoanDetails(form.loanId).balance === "0.00") || loading || (user.role === 'admin' || user.role === 'agent') ? 0.6 : 1, 
+                cursor: (form.loanId && getLoanDetails(form.loanId).balance === "0.00") || loading || (user.role === 'admin' || user.role === 'agent') ? 'not-allowed' : 'pointer',
+                background: (user.role === 'admin' || user.role === 'agent') ? '#6c757d' : 'linear-gradient(135deg, #28a745 0%, #20c997 100%)'
               }} 
               type="submit" 
-              disabled={(form.loanId && getLoanDetails(form.loanId).balance === "0.00") || loading}
+              disabled={(form.loanId && getLoanDetails(form.loanId).balance === "0.00") || loading || user.role === 'admin' || user.role === 'agent'}
               onMouseEnter={(e) => {
-                if (!(form.loanId && getLoanDetails(form.loanId).balance === "0.00") && !loading) {
+                if (!(form.loanId && getLoanDetails(form.loanId).balance === "0.00") && !loading && user.role === 'customer') {
                   e.target.style.transform = 'translateY(-2px)';
                   e.target.style.boxShadow = '0 4px 12px rgba(40, 167, 69, 0.3)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (!(form.loanId && getLoanDetails(form.loanId).balance === "0.00") && !loading) {
+                if (!(form.loanId && getLoanDetails(form.loanId).balance === "0.00") && !loading && user.role === 'customer') {
                   e.target.style.transform = 'translateY(0)';
                   e.target.style.boxShadow = '0 2px 8px rgba(40, 167, 69, 0.2)';
                 }
@@ -233,20 +234,21 @@ function Payments({ user }) {
             >
               {loading ? (
                 <>
-                  <i className="bi bi-arrow-clockwise" style={{ 
-                    marginRight: '0.5rem',
-                    animation: 'spin 1s linear infinite'
-                  }}></i>
+                  <span style={{ marginRight: '0.5rem' }}>⏳</span>
                   Processing...
+                </>
+              ) : user.role === 'admin' || user.role === 'agent' ? (
+                <>
+                  Pay EMI
                 </>
               ) : (
                 <>
-                  <i className="bi bi-credit-card" style={{ marginRight: '0.5rem' }}></i>
+                  <span style={{ marginRight: '0.5rem' }}>💳</span>
                   Pay EMI
                 </>
               )}
             </button>
-          </form>
+        </form>
           
           {/* Loan Details */}
           {form.loanId && (
@@ -290,7 +292,7 @@ function Payments({ user }) {
           )}
 
           {/* Fully Paid Status */}
-          {form.loanId && getLoanDetails(form.loanId).balance === "0.00" && (
+        {form.loanId && getLoanDetails(form.loanId).balance === "0.00" && (
             <div style={{ 
               marginBottom: '1.5rem', 
               textAlign: 'center',
@@ -327,8 +329,8 @@ function Payments({ user }) {
             }}>
               <i className="bi bi-exclamation-triangle-fill" style={{ marginRight: '0.5rem' }}></i>
               {error}
-            </div>
-          )}
+          </div>
+        )}
           {success && (
             <div style={{ 
               marginTop: '1rem',
@@ -342,8 +344,8 @@ function Payments({ user }) {
             }}>
               <i className="bi bi-check-circle-fill" style={{ marginRight: '0.5rem' }}></i>
               {success}
-            </div>
-          )}
+          </div>
+        )}
         </div>
       </div>
 
@@ -468,8 +470,8 @@ function Payments({ user }) {
               </thead>
               <tbody>
                 {payments
-                  .slice() // create a copy
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // sort by date descending
+                .slice() // create a copy
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // sort by date descending
                   .map((p, index) => (
                     <tr key={p.id} style={{ 
                       borderBottom: index < payments.length - 1 ? '1px solid #f8f9fa' : 'none'
@@ -518,10 +520,10 @@ function Payments({ user }) {
                           })}
                         </div>
                       </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
           ) : (
             <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#666' }}>
               <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.3 }}>💳</div>

@@ -47,6 +47,7 @@ const loanRoutes = require('./routes/loan');
 const paymentRoutes = require('./routes/payment');
 const agentRoutes = require('./routes/agent');
 const reportRoutes = require('./routes/report');
+const notificationRoutes = require('./routes/notification');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
@@ -54,6 +55,7 @@ app.use('/api/loans', loanRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 404 Handler - must be after all routes
 app.use(notFoundHandler);

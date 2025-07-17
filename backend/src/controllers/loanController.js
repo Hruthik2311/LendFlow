@@ -1,6 +1,8 @@
 const Loan = require('../models/Loan');
 const Customer = require('../models/Customer');
 const Agent = require('../models/Agent');
+const User = require('../models/User');
+const { notificationService } = require('../services/NotificationService');
 const { 
   asyncHandler, 
   NotFoundError, 
@@ -162,6 +164,39 @@ exports.assignAgent = asyncHandler(async (req, res) => {
     await loan.save();
 
     console.log(`Agent ${agentId} assigned to loan ${loan.id} by admin ${req.user.id}`);
+
+    // Send notification to the assigned agent
+    try {
+      // Find the User that corresponds to this Agent (by email)
+      const user = await User.findOne({ where: { email: agent.email, role: 'agent' } });
+      
+      if (user) {
+        const notificationMessage = `You have been assigned to Loan #${loan.id} (₹${loan.amount}) for customer ${loan.Customer?.name || 'Unknown'}. Please review and begin recovery process.`;
+        
+        await notificationService.sendNotification(
+          user.id, // Use User ID instead of Agent ID
+          notificationMessage,
+          'loan_assignment',
+          {
+            loanId: loan.id,
+            loanAmount: loan.amount,
+            customerName: loan.Customer?.name,
+            customerEmail: loan.Customer?.email,
+            loanStatus: loan.status,
+            recoveryStatus: loan.recoveryStatus,
+            assignedBy: req.user.id,
+            assignedAt: new Date().toISOString()
+          }
+        );
+        
+        console.log(`✅ Notification sent to User ID ${user.id} for Agent ${agentId}`);
+      } else {
+        console.warn(`⚠️ No User found for Agent ${agentId} with email ${agent.email}`);
+      }
+    } catch (notificationError) {
+      // Log notification error but don't fail the assignment
+      console.error('Failed to send notification:', notificationError);
+    }
 
   res.json({
     success: true,
