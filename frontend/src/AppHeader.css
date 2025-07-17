@@ -1,0 +1,242 @@
+.app-bg {
+  min-height: 100vh;
+  width: 100%;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header with dark gray theme */
+.app-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  /* Dark Gray Theme */
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border-radius: 0;
+  margin: 0;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle pattern overlay */
+.app-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* User info section styling */
+.app-header .user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flexShrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.app-header .user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 3px solid rgba(255,255,255,0.3);
+  transition: all 0.3s ease;
+}
+
+.app-header .user-avatar:hover {
+  transform: scale(1.05);
+  border-color: rgba(255,255,255,0.6);
+}
+
+.app-header .user-name {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  background: rgba(255,255,255,0.15);
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.app-header .user-name:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+
+.app-header .user-role {
+  color: #fff;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Dashboard title styling */
+.app-header .dashboard-title {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.4rem;
+  background: rgba(255,255,255,0.15);
+  padding: 0.7rem 1.8rem;
+  border-radius: 25px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  text-transform: capitalize;
+  white-space: nowrap;
+  flexShrink: 0;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.app-header .dashboard-title:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* Logout button styling */
+.app-header .logout-btn {
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.6rem 1.8rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  flexShrink: 0;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+  background: rgba(217, 130, 43, 0.9);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+
+.app-header .logout-btn:hover {
+  background: rgba(217, 130, 43, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 130, 43, 0.3);
+}
+
+.app-header .logout-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .app-header {
+    padding: 1.3rem 1.5rem;
+  }
+  
+  .app-header .dashboard-title {
+    font-size: 1.2rem;
+    padding: 0.6rem 1.5rem;
+  }
+  
+  .app-header .user-name {
+    font-size: 1rem;
+    padding: 0.4rem 1rem;
+  }
+}
+
+@media (max-width: 1000px) {
+  .app-header {
+    padding: 1.2rem 1rem;
+  }
+  
+  .app-header .dashboard-title {
+    font-size: 1.1rem;
+    padding: 0.5rem 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+  }
+  
+  .app-header .user-info {
+    order: 1;
+  }
+  
+  .app-header .dashboard-title {
+    order: 2;
+    font-size: 1.3rem;
+  }
+  
+  .app-header .logout-btn {
+    order: 3;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    padding: 1rem 0.5rem;
+    gap: 0.8rem;
+  }
+  
+  .app-header .user-info {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  
+  .app-header .dashboard-title {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .app-header .logout-btn {
+    font-size: 0.9rem;
+    padding: 0.5rem 1.5rem;
+  }
+}
+
+/* Animation for header elements */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-header .user-info,
+.app-header .dashboard-title,
+.app-header .logout-btn {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.app-header .dashboard-title {
+  animation-delay: 0.1s;
+}
+
+.app-header .logout-btn {
+  animation-delay: 0.2s;
+}

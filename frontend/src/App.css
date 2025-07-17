@@ -1,0 +1,183 @@
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  color: #222;
+}
+
+.container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  padding: 2.5rem 2rem;
+  margin-top: 2rem;
+  color: #222;
+}
+.container:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.14);
+}
+
+h1, h2, h3, h5 {
+  color: #222;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+nav {
+  margin-bottom: 2rem;
+}
+
+.table {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  color: #222;
+}
+
+th, td {
+  vertical-align: middle !important;
+  font-size: 1.05rem;
+  color: #222;
+}
+
+.btn {
+  min-width: 110px;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(44,62,80,0.04);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-success {
+  background: #d9822b;
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  color: #fff;
+}
+.btn-success:hover {
+  background: linear-gradient(90deg, #cc742b 0%, #c06c28 100%);
+  transition: 0.2s;
+  box-shadow: 0 4px 12px rgba(67,233,123,0.12);
+}
+
+.btn-primary {
+    background: #000000;
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: linear-gradient(90deg, #2948ff 0%, #396afc 100%);
+  transition: 0.2ms;
+  box-shadow: 0 4px 12px rgba(41,72,255,0.12);
+}
+
+
+.sigin_btn{
+  background-color: #000000;
+  margin-right: auto;
+  border: #000000;
+}
+.signin_btn:hover{
+   background-color: hsl(30,70%,51%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.signup_btn{
+  background-color: #d9822b;
+  border: #000000;
+}
+.signup_btn:hover{
+  background-color: hsla(0, 0%, 0%, 0.808);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.btn-danger {
+  background: linear-gradient(90deg, #ff6a6a 0%, #ffb86c 100%);
+  border: none;
+  color: #fff;
+}
+.btn-danger:hover {
+  background: linear-gradient(90deg, #ffb86c 0%, #ff6a6a 100%);
+  box-shadow: 0 4px 12px rgba(255,106,106,0.12);
+}
+input, select, .form-control {
+  border-radius: 8px;
+  font-size: 1.08rem;
+  border: 1px solid #2948ff;
+  background: #f6faff;
+  color: #222;
+  transition: border 0.2s;
+}
+input:focus, select:focus, .form-control:focus {
+  border-color: #396afc;
+  outline: none;
+  color: #222;
+}
+.alert {
+  border-radius: 8px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.04);
+  color: #222;
+  background: #ffe9e9;
+  border: 1px solid #ff6a6a;
+}
+/* Add subtle hover effect for table rows */
+tbody tr:hover {
+  background: #e3eafc;
+  transition: background 0.2s;
+}
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+  .table {
+    font-size: 0.95rem;
+  }
+}
