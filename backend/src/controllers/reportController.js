@@ -122,12 +122,15 @@ exports.getOutstandingLoans = asyncHandler(async (req, res) => {
       const emi = rate === 0 ? (principal / n) : (principal * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
       const totalDue = emi * n;
       const outstandingAmount = Math.max(0, totalDue - totalPaid);
+      
+      // Consider fully paid if outstanding amount is less than ₹1
+      const finalOutstandingAmount = outstandingAmount < 1 ? 0 : outstandingAmount;
 
       return {
         ...loan.toJSON(),
         totalPaid: totalPaid.toFixed(2),
         totalDue: totalDue.toFixed(2),
-        outstandingAmount: outstandingAmount.toFixed(2),
+        outstandingAmount: finalOutstandingAmount.toFixed(2),
         emi: emi.toFixed(2),
         paymentCount: payments.length,
         lastPaymentDate: payments.length > 0 ? payments[payments.length - 1].paymentDate : null
@@ -198,12 +201,15 @@ exports.getRecoveryReport = asyncHandler(async (req, res) => {
       const emi = rate === 0 ? (principal / n) : (principal * rate * Math.pow(1 + rate, n)) / (Math.pow(1 + rate, n) - 1);
       const totalDue = emi * n;
       const outstandingAmount = Math.max(0, totalDue - totalPaid);
+      
+      // Consider fully paid if outstanding amount is less than ₹1
+      const finalOutstandingAmount = outstandingAmount < 1 ? 0 : outstandingAmount;
 
       return {
         ...loan.toJSON(),
         totalPaid: totalPaid.toFixed(2),
         totalDue: totalDue.toFixed(2),
-        outstandingAmount: outstandingAmount.toFixed(2),
+        outstandingAmount: finalOutstandingAmount.toFixed(2),
         emi: emi.toFixed(2),
         paymentCount: payments.length,
         lastPaymentDate: payments.length > 0 ? payments[payments.length - 1].paymentDate : null

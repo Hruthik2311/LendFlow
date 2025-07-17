@@ -22,7 +22,7 @@ exports.getAllLoans = asyncHandler(async (req, res) => {
 });
 
 exports.createLoan = asyncHandler(async (req, res) => {
-  const { customerId, amount, interestRate, termMonths } = req.body;
+    const { customerId, amount, interestRate, termMonths } = req.body;
 
   // Validate customer exists
   const customer = await Customer.findByPk(customerId);
@@ -64,7 +64,7 @@ exports.createLoan = asyncHandler(async (req, res) => {
 });
 
 exports.updateLoanStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
   const { status } = req.body;
   const userId = req.user.id;
 
@@ -94,10 +94,10 @@ exports.updateLoanStatus = asyncHandler(async (req, res) => {
   }
 
   // Update loan status
-  loan.status = status;
+    loan.status = status;
   
-  if (status === 'approved') {
-    loan.startDate = new Date();
+    if (status === 'approved') {
+      loan.startDate = new Date();
     // Calculate end date based on term
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + loan.termMonths);
@@ -122,7 +122,7 @@ exports.updateLoanStatus = asyncHandler(async (req, res) => {
 
 exports.assignAgent = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { agentId } = req.body;
+    const { agentId } = req.body;
 
   // Check if user is admin
   if (req.user.role !== 'admin') {
@@ -150,7 +150,7 @@ exports.assignAgent = asyncHandler(async (req, res) => {
     throw new ValidationError('This agent is already assigned to this loan');
   }
 
-  loan.agentId = agentId;
+    loan.agentId = agentId;
   
   // Set recovery status based on loan status
   if (loan.status === 'approved') {
@@ -159,9 +159,9 @@ exports.assignAgent = asyncHandler(async (req, res) => {
     loan.recoveryStatus = 'assigned';
   }
   
-  await loan.save();
+    await loan.save();
 
-  console.log(`Agent ${agentId} assigned to loan ${loan.id} by admin ${req.user.id}`);
+    console.log(`Agent ${agentId} assigned to loan ${loan.id} by admin ${req.user.id}`);
 
   res.json({
     success: true,
@@ -224,7 +224,7 @@ exports.getLoansByAgent = asyncHandler(async (req, res) => {
 
 exports.updateRecoveryStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { recoveryStatus } = req.body;
+    const { recoveryStatus } = req.body;
   const userId = req.user.id;
 
   const loan = await Loan.findByPk(id, { include: [Customer, Agent] });
@@ -248,8 +248,8 @@ exports.updateRecoveryStatus = asyncHandler(async (req, res) => {
     throw new ValidationError(`Invalid recovery status. Must be one of: ${validRecoveryStatuses.join(', ')}`);
   }
 
-  loan.recoveryStatus = recoveryStatus;
-  await loan.save();
+    loan.recoveryStatus = recoveryStatus;
+    await loan.save();
 
   console.log(`Recovery status for loan ${loan.id} updated to '${recoveryStatus}' by ${req.user.role} ${userId}`);
 

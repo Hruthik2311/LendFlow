@@ -199,10 +199,10 @@ function Register({ onRegister, onLogin }) {
               cursor: 'pointer'
             }}
           >
-            <option value="customer">Customer</option>
-            <option value="agent">Agent</option>
-            <option value="admin">Admin</option>
-          </select>
+          <option value="customer">Customer</option>
+          <option value="agent">Agent</option>
+          <option value="admin">Admin</option>
+        </select>
         </div>
 
         {form.role === 'agent' && (
@@ -355,7 +355,7 @@ function Register({ onRegister, onLogin }) {
         >
           Sign In Instead
         </button>
-      </div>
+    </div>
     </>
   );
 }

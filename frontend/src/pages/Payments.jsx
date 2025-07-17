@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { api, handleApiError, handleApiSuccess, handleTokenExpiration } from '../utils/api';
 
 function Payments({ user }) {
@@ -8,6 +9,7 @@ function Payments({ user }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   // Helper: Calculate EMI and balance
   const getLoanDetails = loanId => {
@@ -22,7 +24,11 @@ function Payments({ user }) {
     const paid = payments.filter(p => p.loanId === loan.id).reduce((sum, p) => sum + parseFloat(p.amount), 0);
     const totalDue = emi * n;
     const balance = Math.max(0, totalDue - paid);
-    return { emi: emi.toFixed(2), balance: balance.toFixed(2) };
+    
+    // Consider fully paid if balance is less than ₹1
+    const finalBalance = balance < 1 ? 0 : balance;
+    
+    return { emi: emi.toFixed(2), balance: finalBalance.toFixed(2) };
   };
 
   // Update amount when loan changes
@@ -86,14 +92,24 @@ function Payments({ user }) {
     setError(''); 
     setSuccess('');
     setLoading(true);
+    setShowSuccessAnimation(false);
     
     try {
       await api.createPayment({ loanId: form.loanId, amount: form.amount });
-      handleApiSuccess('Payment successful!', setSuccess);
+      
+      // Show success animation
+      setShowSuccessAnimation(true);
+      setSuccess('Payment successful!');
       
       // Refresh payment history
       const data = await api.getPaymentsByLoan(form.loanId);
       setPayments(Array.isArray(data.data) ? data.data : []);
+      
+      // Hide animation after 3 seconds
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+        setSuccess('');
+      }, 3000);
     } catch (err) {
       if (err.status === 401) {
         handleTokenExpiration();
@@ -330,6 +346,54 @@ function Payments({ user }) {
           )}
         </div>
       </div>
+
+      {/* Payment Success Animation */}
+      {showSuccessAnimation && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          backdropFilter: 'blur(5px)'
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: '20px',
+            padding: '2rem',
+            textAlign: 'center',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            maxWidth: '400px',
+            width: '90%'
+          }}>
+            <DotLottieReact
+              src="https://lottie.host/9701ac69-f35b-46ed-9f46-e58f84ffa77c/QUVXQRcA8Y.lottie"
+              style={{
+                width: '200px',
+                height: '200px',
+                margin: '0 auto'
+              }}
+              loop={false}
+              autoplay
+            />
+            <div style={{
+              marginTop: '1rem',
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              color: '#28a745'
+            }}>
+              Payment Successful!
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Payment History Section */}
       <div style={{ 
         background: '#fff', 

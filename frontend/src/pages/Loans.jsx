@@ -25,7 +25,7 @@ function Loans({ user }) {
     const random = Math.random() * 0.4;
     let rate = baseRate + random;
     rate = Math.max(1.5, Math.min(rate, 3.5));
-    return rate.toFixed(2);
+    return rate.toFixed(1);
   };
 
   // Update interest rate when amount or term changes
@@ -274,7 +274,11 @@ function Loans({ user }) {
     const paid = payments && payments.length ? payments.reduce((sum, p) => sum + parseFloat(p.amount), 0) : 0;
     const totalDue = emi * n;
     const balance = Math.max(0, totalDue - paid);
-    return { emi: emi.toFixed(2), balance: balance.toFixed(2) };
+    
+    // Consider fully paid if balance is less than ₹1
+    const finalBalance = balance < 1 ? 0 : balance;
+    
+    return { emi: emi.toFixed(2), balance: finalBalance.toFixed(2) };
   }
 
   // Helper: Format recovery status text
@@ -478,7 +482,7 @@ function Loans({ user }) {
                           color: '#666', 
                           fontWeight: 500
                         }}>
-                          {loan.interestRate}%
+                          {parseFloat(loan.interestRate).toFixed(1)}%
                         </div>
                       </td>
                       <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
@@ -991,7 +995,7 @@ function Loans({ user }) {
                         color: '#666', 
                         fontWeight: 500
                       }}>
-                        {loan.interestRate}%
+                        {parseFloat(loan.interestRate).toFixed(1)}%
                       </div>
                     </td>
                     <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
@@ -1027,9 +1031,9 @@ function Loans({ user }) {
                           {loan.Agent ? loan.Agent.name : '-'}
                         </div>
                         {/* Show assign agent select for approved loans without agent */}
-                        {user.role === 'admin' && loan.status === 'approved' && !loan.Agent && (
+                      {user.role === 'admin' && loan.status === 'approved' && !loan.Agent && (
                           <div style={{ marginTop: '0.25rem' }}>
-                            <Agents onSelect={agentId => setAssignAgentId(prev => ({ ...prev, [loan.id]: agentId }))} />
+                          <Agents onSelect={agentId => setAssignAgentId(prev => ({ ...prev, [loan.id]: agentId }))} />
                             <button 
                               className="btn btn-primary btn-sm mt-1" 
                               disabled={!assignAgentId[loan.id]} 
@@ -1042,9 +1046,9 @@ function Loans({ user }) {
                             >
                               Assign
                             </button>
-                          </div>
-                        )}
-                      </td>
+                        </div>
+                      )}
+                    </td>
                     )}
                     <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                       <div style={{ 
@@ -1107,19 +1111,19 @@ function Loans({ user }) {
                         fontSize: '0.85rem',
                         color: getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? '#28a745' : '#dc3545'
                       }}>
-                        {getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? (
+                      {getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance === "0.00" ? (
                           <span style={{ fontSize: '0.7rem' }}>Fully Paid</span>
-                        ) : (
+                      ) : (
                           `₹${getLoanDetails(loan, paymentsByLoan[loan.id] || []).balance}`
-                        )}
+                      )}
                       </div>
                     </td>
                     {(user.role === 'admin' || user.role === 'agent') && (
                       <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                           {/* Approve/Reject buttons for pending loans */}
-                          {loan.status === 'pending' && user.role !== 'agent' && (
-                            <>
+                        {loan.status === 'pending' && user.role !== 'agent' && (
+                          <>
                                   <button 
                                     className="btn btn-success btn-sm"
                                 onClick={() => handleStatus(loan.id, 'approved')}
@@ -1142,12 +1146,12 @@ function Loans({ user }) {
                               >
                                 Reject
                               </button>
-                            </>
-                          )}
+                          </>
+                        )}
                           
                           {/* Recovery status update */}
                           {(user.role === 'admin' || (user.role === 'agent' && loan.agentId === user.id)) && (
-                            <div>
+                              <div>
                             {editingRecovery[loan.id] ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                                 <select 
@@ -1197,7 +1201,7 @@ function Loans({ user }) {
                         
                         {/* Delete button for rejected loans */}
                         {loan.status === 'rejected' && (
-                          <button 
+                                  <button 
                             className="btn btn-danger btn-sm"
                             onClick={() => handleDeleteLoan(loan.id)}
                             style={{
@@ -1207,14 +1211,14 @@ function Loans({ user }) {
                             }}
                           >
                             Delete
-                          </button>
-                        )}
-                        </div>
+                                  </button>
+                                )}
+                              </div>
                       </td>
                     )}
                     {user.role === 'customer' && loan.status === 'rejected' && (
                       <td style={{ padding: '0.75rem', verticalAlign: 'middle', textAlign: 'center' }}>
-                        <button 
+                              <button 
                           className="btn btn-danger btn-sm"
                           onClick={() => handleDeleteLoan(loan.id)}
                           style={{
@@ -1224,7 +1228,7 @@ function Loans({ user }) {
                           }}
                         >
                           Delete
-                        </button>
+                              </button>
                       </td>
                     )}
                   </tr>
