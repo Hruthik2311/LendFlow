@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "serve": "vite preview --port $PORT",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@dotlottie/react-player": "^1.6.19",
@@ -26,5 +27,8 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
     "vite": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

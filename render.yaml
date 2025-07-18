@@ -1,0 +1,30 @@
+services:
+  # Backend API Service
+  - type: web
+    name: loan-recovery-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false # Set this in Render dashboard
+      - key: JWT_SECRET
+        sync: false # Set this in Render dashboard
+      - key: CORS_ORIGIN
+        value: https://loan-recovery-frontend.onrender.com
+
+  # Frontend Service
+  - type: web
+    name: loan-recovery-frontend
+    env: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://loan-recovery-backend.onrender.com

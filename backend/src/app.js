@@ -42,118 +42,243 @@ app.get('/', (req, res) => {
             }
             
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 20px;
+                padding: 10px;
+                overflow-x: hidden;
             }
             
             .container {
                 background: white;
-                border-radius: 15px;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-                padding: 40px;
-                max-width: 800px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                padding: 20px;
+                max-width: 100%;
                 width: 100%;
                 text-align: center;
+                max-height: 100vh;
+                overflow-y: auto;
+            }
+            
+            @media (min-width: 768px) {
+                .container {
+                    padding: 30px;
+                    max-width: 700px;
+                }
+            }
+            
+            @media (min-width: 1024px) {
+                .container {
+                    padding: 40px;
+                    max-width: 800px;
+                }
             }
             
             .header {
-                margin-bottom: 30px;
+                margin-bottom: 20px;
             }
             
             .header h1 {
-                color: #333;
-                font-size: 2.5em;
-                margin-bottom: 10px;
-                font-weight: 300;
+                color: #2c3e50;
+                font-size: clamp(1.8rem, 4vw, 2.5rem);
+                margin-bottom: 8px;
+                font-weight: 600;
+                line-height: 1.2;
             }
             
             .header p {
-                color: #666;
-                font-size: 1.1em;
+                color: #7f8c8d;
+                font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+                margin-bottom: 0;
             }
             
             .status {
-                background: #e8f5e8;
-                border: 2px solid #4caf50;
-                border-radius: 10px;
-                padding: 20px;
-                margin: 20px 0;
+                background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+                border: 1px solid #28a745;
+                border-radius: 8px;
+                padding: 12px 16px;
+                margin: 15px 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 10px;
+                gap: 8px;
+                box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1);
             }
             
             .status-indicator {
-                width: 12px;
-                height: 12px;
-                background: #4caf50;
+                width: 8px;
+                height: 8px;
+                background: #28a745;
                 border-radius: 50%;
                 animation: pulse 2s infinite;
+                flex-shrink: 0;
             }
             
             @keyframes pulse {
-                0% { opacity: 1; }
-                50% { opacity: 0.5; }
-                100% { opacity: 1; }
+                0% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.7; transform: scale(1.1); }
+                100% { opacity: 1; transform: scale(1); }
             }
             
             .endpoints {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 15px;
-                margin-top: 30px;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin: 20px 0;
+            }
+            
+            @media (min-width: 480px) {
+                .endpoints {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 12px;
+                }
+            }
+            
+            @media (min-width: 768px) {
+                .endpoints {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 15px;
+                }
             }
             
             .endpoint-card {
                 background: #f8f9fa;
                 border: 1px solid #e9ecef;
-                border-radius: 10px;
-                padding: 20px;
-                transition: transform 0.2s, box-shadow 0.2s;
+                border-radius: 8px;
+                padding: 15px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .endpoint-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #007bff, #6610f2);
+                transform: scaleX(0);
+                transition: transform 0.3s ease;
             }
             
             .endpoint-card:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-color: #007bff;
+            }
+            
+            .endpoint-card:hover::before {
+                transform: scaleX(1);
             }
             
             .endpoint-card h3 {
                 color: #495057;
-                margin-bottom: 10px;
-                font-size: 1.1em;
+                margin-bottom: 6px;
+                font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 6px;
             }
             
             .endpoint-card p {
                 color: #6c757d;
-                font-size: 0.9em;
+                font-size: clamp(0.75rem, 2vw, 0.9rem);
                 line-height: 1.4;
+                margin: 0;
             }
             
             .api-link {
                 display: inline-block;
-                margin-top: 20px;
+                margin: 15px 0;
                 padding: 12px 24px;
-                background: #007bff;
+                background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
                 color: white;
                 text-decoration: none;
                 border-radius: 25px;
-                transition: background 0.3s;
+                transition: all 0.3s ease;
+                font-weight: 500;
+                font-size: clamp(0.85rem, 2.5vw, 1rem);
+                box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
             }
             
             .api-link:hover {
-                background: #0056b3;
+                background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+                color: white;
+                text-decoration: none;
             }
             
             .footer {
-                margin-top: 30px;
+                margin-top: 20px;
                 color: #6c757d;
-                font-size: 0.9em;
+                font-size: clamp(0.75rem, 2vw, 0.9rem);
+                line-height: 1.4;
+            }
+            
+            .footer p {
+                margin: 2px 0;
+            }
+            
+            /* Mobile optimizations */
+            @media (max-width: 480px) {
+                body {
+                    padding: 5px;
+                }
+                
+                .container {
+                    padding: 15px;
+                    border-radius: 8px;
+                }
+                
+                .header h1 {
+                    font-size: 1.6rem;
+                }
+                
+                .header p {
+                    font-size: 0.85rem;
+                }
+                
+                .status {
+                    padding: 10px 12px;
+                    font-size: 0.85rem;
+                }
+                
+                .endpoint-card {
+                    padding: 12px;
+                }
+                
+                .endpoint-card h3 {
+                    font-size: 0.85rem;
+                }
+                
+                .endpoint-card p {
+                    font-size: 0.75rem;
+                }
+                
+                .api-link {
+                    padding: 10px 20px;
+                    font-size: 0.85rem;
+                }
+            }
+            
+            /* Ensure no horizontal scroll */
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            
+            /* Smooth scrolling */
+            html {
+                scroll-behavior: smooth;
             }
         </style>
     </head>

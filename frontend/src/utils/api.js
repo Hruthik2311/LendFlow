@@ -1,216 +1,281 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+// API configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// API response handler
-const handleResponse = async (response) => {
-  const data = await response.json();
-  
-  if (!response.ok) {
-    // Handle different error formats
-    let errorMessage = 'An error occurred';
-    
-    if (data.error) {
-      if (typeof data.error === 'string') {
-        errorMessage = data.error;
-      } else if (data.error.message) {
-        errorMessage = data.error.message;
-      } else if (data.error.validationErrors) {
-        // Format validation errors nicely
-        errorMessage = data.error.validationErrors.map(err => `${err.field}: ${err.message}`).join('\n');
-      }
-    } else if (data.message) {
-      errorMessage = data.message;
-    }
-    
-    const error = new Error(errorMessage);
-    error.status = response.status;
-    error.data = data;
-    throw error;
-  }
-  
-  return data;
-};
-
-// API request wrapper
-const apiRequest = async (endpoint, options = {}) => {
-  const token = localStorage.getItem('token');
-  
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` }),
-      ...options.headers,
-    },
-    ...options,
-  };
-
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    return await handleResponse(response);
-  } catch (error) {
-    // Handle network errors
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error('Network error. Please check your connection.');
-    }
-    throw error;
-  }
-};
-
-// API methods
 export const api = {
-  // Auth
-  login: (credentials) => apiRequest('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(credentials),
-  }),
+  // Base configuration
+  baseURL: API_BASE_URL,
   
-  register: (userData) => apiRequest('/auth/register', {
-    method: 'POST',
-    body: JSON.stringify(userData),
-  }),
-  
-  getProfile: () => apiRequest('/auth/profile'),
-  
-  updateProfile: (profileData) => apiRequest('/auth/profile', {
-    method: 'PUT',
-    body: JSON.stringify(profileData),
-  }),
-  
-  // Loans
-  getAllLoans: () => apiRequest('/loans'),
-  
-  getLoanById: (id) => apiRequest(`/loans/${id}`),
-  
-  createLoan: (loanData) => apiRequest('/loans', {
-    method: 'POST',
-    body: JSON.stringify(loanData),
-  }),
-  
-  updateLoanStatus: (id, status) => apiRequest(`/loans/${id}/status`, {
-    method: 'PATCH',
-    body: JSON.stringify({ status }),
-  }),
-  
-  assignAgent: (loanId, agentId) => apiRequest(`/loans/${loanId}/assign-agent`, {
-    method: 'PATCH',
-    body: JSON.stringify({ agentId }),
-  }),
-  
-  getLoansByCustomer: (customerId) => apiRequest(`/loans/customer/${customerId}`),
-  
-  getLoansByAgent: (agentId) => apiRequest(`/loans/agent/${agentId}`),
-  
-  updateRecoveryStatus: (loanId, recoveryStatus) => apiRequest(`/loans/${loanId}/recovery-status`, {
-    method: 'PATCH',
-    body: JSON.stringify({ recoveryStatus }),
-  }),
-  
-  deleteLoan: (id) => apiRequest(`/loans/${id}`, {
-    method: 'DELETE',
-  }),
-  
-  // Payments
-  getAllPayments: () => apiRequest('/payments'),
-  
-  createPayment: (paymentData) => apiRequest('/payments', {
-    method: 'POST',
-    body: JSON.stringify(paymentData),
-  }),
-  
-  getPaymentsByLoan: (loanId) => apiRequest(`/payments/loan/${loanId}`),
-  
-  // Customers
-  getAllCustomers: () => apiRequest('/customers'),
-  
-  createCustomer: (customerData) => apiRequest('/customers', {
-    method: 'POST',
-    body: JSON.stringify(customerData),
-  }),
-  
-  // Agents
-  getAllAgents: () => apiRequest('/agents'),
-  
-  createAgent: (agentData) => apiRequest('/agents', {
-    method: 'POST',
-    body: JSON.stringify(agentData),
-  }),
-  
-  // Reports
-  getRecoveredLoans: () => apiRequest('/reports/recovered'),
-  
-  getOutstandingLoans: () => apiRequest('/reports/outstanding'),
-  
-  getRecoveryReport: () => apiRequest('/reports/recovery'),
+  // Helper function to make API calls
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const token = localStorage.getItem('token');
+    
+    const defaultOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...options.headers,
+      },
+    };
 
-  // Notifications
-  getNotifications: () => apiRequest('/notifications'),
-  
-  getUnreadCount: () => apiRequest('/notifications/unread-count'),
-  
-  markAsRead: (notificationId) => apiRequest(`/notifications/${notificationId}/read`, {
-    method: 'PATCH',
-  }),
-  
-  markAllAsRead: () => apiRequest('/notifications/mark-all-read', {
-    method: 'PATCH',
-  }),
-  
-  clearNotifications: () => apiRequest('/notifications/clear', {
-    method: 'DELETE',
-  }),
+    const response = await fetch(url, { ...defaultOptions, ...options });
+    
+    if (!response.ok) {
+      const error = new Error(`HTTP error! status: ${response.status}`);
+      error.status = response.status; // Add status for backward compatibility
+      throw error;
+    }
+    
+    return response.json();
+  },
+
+  // Auth endpoints
+  async login(credentials) {
+    return this.request('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+  },
+
+  async register(userData) {
+    return this.request('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  },
+
+  // Customer endpoints
+  async getCustomers() {
+    return this.request('/api/customers');
+  },
+
+  async createCustomer(customerData) {
+    return this.request('/api/customers', {
+      method: 'POST',
+      body: JSON.stringify(customerData),
+    });
+  },
+
+  async updateCustomer(id, customerData) {
+    return this.request(`/api/customers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(customerData),
+    });
+  },
+
+  async deleteCustomer(id) {
+    return this.request(`/api/customers/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Loan endpoints
+  async getLoans() {
+    return this.request('/api/loans');
+  },
+
+  // Legacy method names for backward compatibility
+  async getAllLoans() {
+    return this.request('/api/loans');
+  },
+
+  async getLoansByCustomer(customerId) {
+    return this.request(`/api/loans/customer/${customerId}`);
+  },
+
+  async getLoansByAgent(agentId) {
+    return this.request(`/api/loans/agent/${agentId}`);
+  },
+
+  async createLoan(loanData) {
+    return this.request('/api/loans', {
+      method: 'POST',
+      body: JSON.stringify(loanData),
+    });
+  },
+
+  async updateLoan(id, loanData) {
+    return this.request(`/api/loans/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(loanData),
+    });
+  },
+
+  async updateLoanStatus(id, status) {
+    return this.request(`/api/loans/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+  },
+
+  async assignAgent(loanId, agentId) {
+    return this.request(`/api/loans/${loanId}/assign-agent`, {
+      method: 'PATCH',
+      body: JSON.stringify({ agentId }),
+    });
+  },
+
+  async updateRecoveryStatus(loanId, recoveryStatus) {
+    return this.request(`/api/loans/${loanId}/recovery-status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ recoveryStatus }),
+    });
+  },
+
+  async deleteLoan(id) {
+    return this.request(`/api/loans/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Payment endpoints
+  async getPayments() {
+    return this.request('/api/payments');
+  },
+
+  async getPaymentsByLoan(loanId) {
+    return this.request(`/api/payments/loan/${loanId}`);
+  },
+
+  async createPayment(paymentData) {
+    return this.request('/api/payments', {
+      method: 'POST',
+      body: JSON.stringify(paymentData),
+    });
+  },
+
+  async updatePayment(id, paymentData) {
+    return this.request(`/api/payments/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(paymentData),
+    });
+  },
+
+  async deletePayment(id) {
+    return this.request(`/api/payments/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Agent endpoints
+  async getAgents() {
+    return this.request('/api/agents');
+  },
+
+  // Legacy method name for backward compatibility
+  async getAllAgents() {
+    return this.request('/api/agents');
+  },
+
+  async createAgent(agentData) {
+    return this.request('/api/agents', {
+      method: 'POST',
+      body: JSON.stringify(agentData),
+    });
+  },
+
+  async updateAgent(id, agentData) {
+    return this.request(`/api/agents/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(agentData),
+    });
+  },
+
+  async deleteAgent(id) {
+    return this.request(`/api/agents/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Report endpoints
+  async getReports() {
+    return this.request('/api/reports');
+  },
+
+  async getRecoveryReport() {
+    return this.request('/api/reports/recovery');
+  },
+
+  async getRecoveredLoans() {
+    return this.request('/api/reports/recovered');
+  },
+
+  async getOutstandingLoans() {
+    return this.request('/api/reports/outstanding');
+  },
+
+  // Notification endpoints
+  async getNotifications() {
+    return this.request('/api/notifications');
+  },
+
+  async getUnreadCount() {
+    return this.request('/api/notifications/unread-count');
+  },
+
+  async markAsRead(id) {
+    return this.request(`/api/notifications/${id}/read`, {
+      method: 'PUT',
+    });
+  },
+
+  async markAllAsRead() {
+    return this.request('/api/notifications/mark-all-read', {
+      method: 'PATCH',
+    });
+  },
+
+  async clearNotifications() {
+    return this.request('/api/notifications/clear', {
+      method: 'DELETE',
+    });
+  },
 };
 
-// Error handler for components
-export const handleApiError = (error, setError) => {
+// Error handling utility
+export const handleApiError = (error, setError = null) => {
   console.error('API Error:', error);
   
-  // For validation errors (400), show the specific error message
-  if (error.status === 400 && error.data?.error?.validationErrors) {
-    const validationMessage = error.data.error.validationErrors
-      .map(err => `${err.field}: ${err.message}`)
-      .join('\n');
-    setError(validationMessage);
-    return;
+  let errorMessage = 'An unexpected error occurred.';
+  
+  if (error.message.includes('401')) {
+    // Unauthorized - redirect to login
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/';
+    errorMessage = 'Session expired. Please log in again.';
+  } else if (error.message.includes('403')) {
+    errorMessage = 'Access denied. You do not have permission to perform this action.';
+  } else if (error.message.includes('404')) {
+    errorMessage = 'Resource not found.';
+  } else if (error.message.includes('500')) {
+    errorMessage = 'Server error. Please try again later.';
+  } else {
+    errorMessage = error.message || 'An unexpected error occurred.';
   }
   
-  // For authentication errors (401), show the error message first
-  if (error.status === 401) {
-    setError(error.message || 'Authentication failed');
-    return;
+  // If setError function is provided, use it (for backward compatibility)
+  if (setError && typeof setError === 'function') {
+    setError(errorMessage);
   }
   
-  if (error.status === 403) {
-    setError('Access denied. You do not have permission to perform this action.');
-    return;
-  }
-  
-  if (error.status === 404) {
-    setError('Resource not found.');
-    return;
-  }
-  
-  if (error.status === 422) {
-    setError('Validation error. Please check your input.');
-    return;
-  }
-  
-  if (error.status >= 500) {
-    setError('Server error. Please try again later.');
-    return;
-  }
-  
-  setError(error.message || 'An unexpected error occurred.');
+  return errorMessage;
 };
 
-// Handle token expiration for authenticated users
+// Success handling utility
+export const handleApiSuccess = (message, setSuccess) => {
+  if (setSuccess && typeof setSuccess === 'function') {
+    setSuccess(message);
+    // Clear success message after 5 seconds
+    setTimeout(() => setSuccess(''), 5000);
+  }
+};
+
+// Token expiration handler
 export const handleTokenExpiration = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.reload();
-};
-
-// Success handler for components
-export const handleApiSuccess = (message, setSuccess) => {
-  setSuccess(message);
-  // Auto-clear success message after 3 seconds
-  setTimeout(() => setSuccess(''), 3000);
+  // Dispatch custom event for session expiration
+  window.dispatchEvent(new CustomEvent('sessionExpired'));
+  window.location.href = '/';
 }; 
