@@ -19,8 +19,6 @@ services:
         value: https://loan-recovery-frontend.onrender.com
     autoDeploy: true
     rootDir: .
-    envSpecificPorts:
-      - port: 10000
 
   # Frontend Service
   - type: web
