@@ -19,9 +19,8 @@ services:
         value: https://loan-recovery-frontend.onrender.com
 
   # Frontend Service
-  - type: web
+  - type: static_site
     name: loan-recovery-frontend
-    env: static
     plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
